@@ -2,8 +2,8 @@ from keras.models import load_model
 
 import matplotlib.pyplot as plt
 
-piCamera = 0
-if picamera == 1:
+piCamera = False
+if picamera == True:
     from picamera import PiCamera
     import time
     from picamera.array import PiRGBArray
@@ -29,7 +29,7 @@ def main():
             # Load Model
             model = load_model(args.model)
             # Convert Image To Numpy Array
-            if picamera == 1:
+            if picamera == True:
                 camera = PiCamera()
                 rawImage = PiRGBArray(camera)
                 time.sleep(0.1)
@@ -40,12 +40,18 @@ def main():
             # Predict Image Based On Model
             label = model.predict(image)
             # Print Result
-            print("Predicted Class (0 - Wide Truck , 1- Others): ", round(label[0][0], 2))
-            time.sleep(5)
+            print("Predicted Class (0 - Wide Truck , x- Others): ", round(label[0][0], 2))
+            
             if round(label[0][0], 2) == 0:
                 # displaying the image 
-                plt.imshow(testImage)
+                plt.imshow(image)
+                plt.title('Wide truck detected',  
+                                     fontweight ="bold")
+                plt.show()
                 print("Wide Truck detected")
+            if picamera == False:
+                break
+            time.sleep(5)
     except KeyboardInterrupt:
         pass
 
