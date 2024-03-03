@@ -1,5 +1,13 @@
 from keras.models import load_model
 
+import matplotlib.pyplot as plt
+
+piCamera = 0
+if picamera == 1:
+    from picamera import PiCamera
+    import time
+    from picamera.array import PiRGBArray
+
 import argparse
 import script.utils
 
@@ -15,15 +23,31 @@ def main():
     args = parse_args()
     if args is None:
         exit()
-
-    # Load Model
-    model = load_model(args.model)
-    # Convert Image To Numpy Array
-    image = script.utils.load_image(args.img)
-    # Predict Image Based On Model
-    label = model.predict(image)
-    # Print Result
-    print("Predicted Class (0 - Cars , 1- Planes): ", round(label[0][0], 2))
+    try:
+        while True:
+            
+            # Load Model
+            model = load_model(args.model)
+            # Convert Image To Numpy Array
+            if picamera == 1:
+                camera = PiCamera()
+                rawImage = PiRGBArray(camera)
+                time.sleep(0.1)
+                camera.capture(rawImage, format = "rgb")
+                image = rawImage.array
+            else:
+                image = script.utils.load_image(args.img)
+            # Predict Image Based On Model
+            label = model.predict(image)
+            # Print Result
+            print("Predicted Class (0 - Wide Truck , 1- Others): ", round(label[0][0], 2))
+            time.sleep(5)
+            if round(label[0][0], 2) == 0:
+                # displaying the image 
+                plt.imshow(testImage)
+                print("Wide Truck detected")
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == '__main__':
     main()

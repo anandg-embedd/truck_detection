@@ -1,4 +1,9 @@
 # Importing all necessary libraries
+import os
+os.environ["KERAS_BACKEND"] = "torch"
+
+import keras_core as keras
+
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
