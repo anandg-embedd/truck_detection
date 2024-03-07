@@ -15,7 +15,7 @@ nb_train_samples = None
 nb_validation_samples = 4
 epochs = 15
 batch_size = 16
-classes_number = 7 # Cars and Planes
+classes_number = 2 # Cars and Planes
 
 def main():
     if K.image_data_format() == 'channels_first':

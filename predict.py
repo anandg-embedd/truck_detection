@@ -1,6 +1,7 @@
 from keras.models import load_model
 
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
 picamera = False
 if picamera == True:
@@ -14,23 +15,25 @@ if picamera == True:
 import argparse
 import script.utils
 import numpy as np
+from skimage import transform
 
-
+img_width, img_height = 224, 224
 
 def parse_args():
     desc = "Vehicle Classification"
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('--model', type=str, default='model/categorical_vehicle_model_saved.h5', help='Where Is Model File?')
-    parser.add_argument('--img', type=str, default='dataset/train/Toyota Innova/94.jpg', help='What Is Images Path?')
+    parser.add_argument('--img', type=str, default='dataset/test/Audi/909.jpg', help='What Is Images Path?')
+    #parser.add_argument('--img', type=str, default='dataset/test/Toyota Innova/99.jpg', help='What Is Images Path?')
 
     return parser.parse_args()
 
-def img_pre_process(img):
-    img_width, img_height = 224, 224
-    #img      = img.astype(np.float32)
-    img      = img.resize(img_width,img_height) #cropping the image
-    img = img/255.0
-    return img
+
+def img_pre_process(np_image):
+    np_image = np.array(np_image).astype('float32')/255
+    np_image = transform.resize(np_image, (img_width, img_height, 3))
+    np_image = np.expand_dims(np_image, axis=0)
+    return np_image
 
 def main():
     args = parse_args()
@@ -50,6 +53,7 @@ def main():
 ##                image = rawImage.array
                 try:
                     check, frame = webcam.read()
+                    disp_img=frame;
                     image = img_pre_process(frame)
                 except(KeyboardInterrupt):
                     print("Turning off camera.")
@@ -60,15 +64,15 @@ def main():
                     break
             else:
                 image = script.utils.load_image(args.img)
-            #image = img_pre_process(image)
+                disp_img=mpimg.imread(args.img)
             # Predict Image Based On Model
             label = model.predict(image)
             # Print Result
-            print("Predicted Class (0 - Wide Truck , x- Others): ", round(label[0][0], 2))
+            print("Predicted Class (1 - Wide Truck , x- Others): ", round(label[0][0], 2))
             
-            if round(label[0][0], 2) == 0:
+            if round(label[0][0], 2) == 1:
                 # displaying the image 
-                plt.imshow(image)
+                plt.imshow(disp_img)
                 plt.title('Wide truck detected',  
                                      fontweight ="bold")
                 plt.show()
