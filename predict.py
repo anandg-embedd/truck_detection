@@ -23,8 +23,8 @@ def parse_args():
     desc = "Vehicle Classification"
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('--model', type=str, default='model/categorical_vehicle_model_saved.h5', help='Where Is Model File?')
-    parser.add_argument('--img', type=str, default='dataset/test/Audi/909.jpg', help='What Is Images Path?')
-    #parser.add_argument('--img', type=str, default='dataset/test/Toyota Innova/99.jpg', help='What Is Images Path?')
+    #parser.add_argument('--img', type=str, default='dataset/test/others/42.jpg', help='What Is Images Path?')
+    parser.add_argument('--img', type=str, default='dataset/test/Trucks/5.jpg', help='What Is Images Path?')
 
     return parser.parse_args()
 
@@ -68,9 +68,9 @@ def main():
             # Predict Image Based On Model
             label = model.predict(image)
             # Print Result
-            print("Predicted Class (1 - Wide Truck , x- Others): ", round(label[0][0], 2))
+            print("Predicted Class (0 to 0.5(1) - Wide Truck , x- Others): ", round(label[0][0], 2))
             
-            if round(label[0][0], 2) == 1:
+            if round(label[0][0], 2) >= 0 and round(label[0][0], 2) <= 0.5 :
                 # displaying the image 
                 plt.imshow(disp_img)
                 plt.title('Wide truck detected',  
