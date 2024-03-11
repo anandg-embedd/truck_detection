@@ -60,3 +60,4 @@ Thumbs.db
 /upload/*.jpg
 /upload/*.png
 /upload/*.jpeg
+*.tflite
